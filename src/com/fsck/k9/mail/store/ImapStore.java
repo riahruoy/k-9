@@ -806,7 +806,7 @@ public class ImapStore extends Store {
     }
 
 
-    class ImapFolder extends Folder {
+    public class ImapFolder extends Folder {
         private String mName;
         protected volatile int mMessageCount = -1;
         protected volatile int uidNext = -1;
@@ -1258,6 +1258,15 @@ public class ImapStore extends Store {
             return search(searcher, listener);
         }
 
+        public Message[] getMessagesFromCondition(final String condition, final boolean includeDeleted, final MessageRetrievalListener listener) 
+        throws MessagingException {
+            ImapSearcher searcher = new ImapSearcher() {
+                public List<ImapResponse> search() throws IOException, MessagingException {
+                    return executeSimpleCommand(String.format("UID SEARCH %s%s", condition, includeDeleted ? "" : " NOT DELETED"));
+                }
+            };
+            return search(searcher, listener);
+        }
         private Message[] search(ImapSearcher searcher, MessageRetrievalListener listener) throws MessagingException {
 
             checkOpen();

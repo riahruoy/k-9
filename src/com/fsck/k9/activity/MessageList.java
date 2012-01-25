@@ -636,7 +636,12 @@ public class MessageList
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (view == mFooterView) {
             if (mCurrentFolder != null) {
-                mController.loadMoreMessages(mAccount, mFolderName, mAdapter.mListener);
+            	// synchronize
+            	if (mQueryString == null) {
+            		mController.loadMoreMessages(mAccount, mFolderName, mAdapter.mListener);
+            	} else {
+            		mController.searchRemoteMessages(mAccountUuids, mFolderNames, null, mQueryString, mIntegrate, mQueryFlags, mForbiddenFlags, mAdapter.mListener);
+            	}
             }
             return;
         }
@@ -730,7 +735,7 @@ public class MessageList
         }
 
         // Hide "Load up to x more" footer for search views
-        mFooterView.setVisibility((mQueryString != null) ? View.GONE : View.VISIBLE);
+//        mFooterView.setVisibility((mQueryString != null) ? View.GONE : View.VISIBLE);
 
         mController = MessagingController.getInstance(getApplication());
         mListView.setAdapter(mAdapter);
@@ -817,7 +822,8 @@ public class MessageList
             if (mFolderName != null) {
                 mController.listLocalMessages(mAccount, mFolderName,  mAdapter.mListener);
             } else if (mQueryString != null) {
-                mController.searchLocalMessages(mAccountUuids, mFolderNames, null, mQueryString, mIntegrate, mQueryFlags, mForbiddenFlags, mAdapter.mListener);
+            	mController.searchRemoteMessages(mAccountUuids, mFolderNames, null, mQueryString, mIntegrate, mQueryFlags, mForbiddenFlags, mAdapter.mListener);
+//                mController.searchLocalMessages(mAccountUuids, mFolderNames, null, mQueryString, mIntegrate, mQueryFlags, mForbiddenFlags, mAdapter.mListener);
             }
 
         } else {
@@ -832,7 +838,8 @@ public class MessageList
                     if (mFolderName != null) {
                         mController.listLocalMessagesSynchronous(mAccount, mFolderName,  mAdapter.mListener);
                     } else if (mQueryString != null) {
-                        mController.searchLocalMessagesSynchronous(mAccountUuids, mFolderNames, null, mQueryString, mIntegrate, mQueryFlags, mForbiddenFlags, mAdapter.mListener);
+                    	mController.searchRemoteMessagesSynchronous(mAccountUuids, mFolderNames, null, mQueryString, mIntegrate, mQueryFlags, mForbiddenFlags, mAdapter.mListener);
+//                        mController.searchLocalMessagesSynchronous(mAccountUuids, mFolderNames, null, mQueryString, mIntegrate, mQueryFlags, mForbiddenFlags, mAdapter.mListener);
                     }
 
 
